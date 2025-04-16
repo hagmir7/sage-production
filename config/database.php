@@ -60,9 +60,9 @@ return [
             'options' => [
                 // PDO::SQLSRV_ATTR_FETCHES_DATETIME_TYPE => true, // Return dates as objects
                 // PDO::SQLSRV_ATTR_FORMAT_DECIMALS => true,
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+                // PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::SQLSRV_ATTR_ENCODING => PDO::SQLSRV_ENCODING_UTF8,
+                // PDO::SQLSRV_ATTR_ENCODING => PDO::SQLSRV_ENCODING_UTF8,
                 // Force le format de date français
                 'ApplicationIntent' => 'ReadWrite',
                 'Encrypt' => 'yes',

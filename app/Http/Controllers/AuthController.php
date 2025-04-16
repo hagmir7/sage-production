@@ -10,29 +10,37 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $validation = $request->validate([
-            'name' => 'required|string|max:255',
-            'full_name' => 'required|string|max:255',
-            'phone' => 'string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+        try {
+            $validation = $request->validate([
+                'name' => 'required|string|max:255',
+                'full_name' => 'required|string|max:255',
+                'phone' => 'nullable|string|max:255', // Changed to nullable
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+            ]);
 
-        $user = User::create([
-            'name' => $validation['name'],
-            'full_name' => $validation['full_name'],
-            'email' => $validation['email'],
-            'phone' => $validation['phone'] ?? null,
-            'password' => Hash::make($validation['password']),
-        ]);
+            $user = User::create([
+                'name' => $validation['name'],
+                'full_name' => $validation['full_name'],
+                'email' => $validation['email'],
+                'phone' => $validation['phone'] ?? null,
+                'password' => Hash::make($validation['password']),
+            ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user
-        ]);
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'Bearer',
+                'user' => $user
+            ]);
+        } catch (\Exception $e) {
+            // Return error as JSON response
+            return response()->json([
+                'message' => 'Registration failed',
+                'errors' => $e->getMessage()
+            ], 422);
+        }
     }
 
 
