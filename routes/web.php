@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\MachineEventControlController;
 use App\Http\Controllers\OrderFabricationController;
@@ -10,12 +11,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('login-error', [AuthController::class, 'loginError'])->name('login');
+
 
 
 Route::controller(MachineController::class)
     ->prefix('machines')
     ->group(function () {
-        Route::get('', 'index'); 
+        Route::get('', 'index');
         Route::get('/groupes', 'groupes');
         Route::get('/groupe/{id}', 'show_groupe');
         Route::get('/{id}', 'show'); // <<< Put this last

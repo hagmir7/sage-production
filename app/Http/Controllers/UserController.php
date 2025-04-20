@@ -21,7 +21,6 @@ class UserController extends Controller
                 'full_name' => $validation['full_name'],
                 'email' => $validation['email'],
                 'phone' => $validation['phone'] ?? null,
-                'password' => Hash::make($validation['password']),
             ]);
 
             $token = $user->createToken('auth_token')->plainTextToken;

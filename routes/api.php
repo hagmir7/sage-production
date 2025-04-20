@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserPermissionController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -22,6 +25,22 @@ Route::get('/user/{id}', [AuthController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+
+    // Roles
+    Route::get('/roles', [RoleController::class, 'index']);
+    Route::post('/roles', [RoleController::class, 'store']);
+    Route::get('/roles/permissions/{roleName}', [RoleController::class, 'permissions']);
+
+    // Permissions
+    Route::get('/permissions', [PermissionController::class, 'index']);
+    Route::post('/permissions', [PermissionController::class, 'store']);
+
+    // Assign roles/permissions to users
+    Route::post('/users/{user}/roles', [UserPermissionController::class, 'assignRoles']);
+    Route::post('/role/{role}/permissions', [UserPermissionController::class, 'assignPermissions']);
+
+    Route::get('/user/{id}/permissions', [UserPermissionController::class, 'getUserRolesAndPermissions']);
+    Route::get('/user/permissions', [UserPermissionController::class, 'getAuthUserRolesAndPermissions']);
 });
 
 

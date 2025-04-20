@@ -8,11 +8,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     public $timestamps = false;
 
@@ -28,12 +30,6 @@ class User extends Authenticatable
         'phone',
         'password',
     ];
-
-
-    public function roles(): HasMany
-    {
-        return $this->hasMany(Role::class);
-    }
 
 
     // protected $dateFormat = 'Y-m-d H:i:s';
