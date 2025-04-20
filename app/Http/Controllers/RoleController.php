@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RoleController extends Controller
 {
@@ -14,9 +15,25 @@ class RoleController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(['name' => 'required|string|unique:roles']);
-        $role = Role::create(['name' => $request->name, 'guard_name' => "web"]);
-        return response()->json($role);
+        if (auth()->user()->can('role:create')) {
+            $validator = Validator::make($request->all(), ['name' => 'required|string|unique:roles']);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => "error",
+                    'errors' => $validator->errors()
+                ], 203);
+            }
+
+            $role = Role::create(['name' => $request->name, 'guard_name' => "web"]);
+            return response()->json($role);
+        } else {
+            return response()->json([
+                'status' => "error",
+                'errors' => [
+                    "message" => "Your Not Authenticated"
+                ]
+            ], 203);
+        }
     }
 
 
