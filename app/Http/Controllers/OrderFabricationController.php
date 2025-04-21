@@ -10,7 +10,7 @@ class OrderFabricationController extends Controller
 {
     public function index()
     {
-        return OrderFabrication::orderByDesc('DH_CREATION')->get();
+        return OrderFabrication::orderByDesc('DH_CREATION')->paginate(20);
     }
 
 

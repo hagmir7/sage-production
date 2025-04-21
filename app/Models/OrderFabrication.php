@@ -11,6 +11,12 @@ class OrderFabrication extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
+    protected $guarded = [];
+
+
+    const CREATED_AT = 'DH_CREATION';
+    const UPDATED_AT = 'DH_MODIF';
+
 
     public function nomenclatures()
     {

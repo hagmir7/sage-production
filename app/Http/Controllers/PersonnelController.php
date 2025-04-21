@@ -12,7 +12,7 @@ class PersonnelController extends Controller
 {
     public function index()
     {
-        return Personnel::all();
+        return Personnel::orderByDesc("DH_CREATION")->get();
     }
 
     public function category()

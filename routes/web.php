@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AtelierController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\MachineEventControlController;
 use App\Http\Controllers\OrderFabricationController;
@@ -46,3 +47,4 @@ Route::controller(MachineEventControlController::class)->prefix('machine-event-c
     Route::get('/{id}', 'show');
     // Route::get('/nomenclature/{id}', 'nomenclature');
 });
+

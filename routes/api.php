@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AtelierController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReglageController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -22,6 +25,8 @@ Route::get('/user/{id}', [AuthController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::post('/user/update', [UserController::class, 'update']);
+    Route::post('/user/update/{id}', [UserController::class, 'update']);
 });
 
 
@@ -48,3 +53,19 @@ Route::post('/sanctum/token', function (Request $request) {
 
     return $user->createToken($request->device_name)->plainTextToken;
 });
+
+
+
+Route::controller(AtelierController::class)->prefix('atelier')->group(function () {
+    Route::get('', 'index');
+    Route::get('/{id}', 'show');
+    Route::put('/update/{id}', 'update');
+    Route::post('/store', 'store');
+});
+
+
+Route::controller(ReglageController::class)->prefix('reglage')->group(function () {
+    Route::post('debut', 'debut');
+    Route::post('fin', 'fin');
+});
+

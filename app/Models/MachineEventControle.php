@@ -15,5 +15,9 @@ class MachineEventControle extends Model
     protected $guarded = [];
 
 
+    const CREATED_AT = 'DH_CREATION';
+    const UPDATED_AT = 'DH_MODIF';
+
+
     // public function 
 }
