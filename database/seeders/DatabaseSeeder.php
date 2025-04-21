@@ -15,12 +15,18 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
+
+    
     public function run()
     {
         // Changer explicitement le format de date pour cette session
         // DB::statement("SET LANGUAGE us_english");
         DB::statement("SET DATEFORMAT mdy");
         DB::statement("SET LANGUAGE ENGLISH;"); 
+
+        $this->call([
+            RoleSeeder::class,
+        ]);
     
         // Puis faire l'insertion avec le format ISO
 
@@ -39,9 +45,9 @@ class DatabaseSeeder extends Seeder
         //     )
         // ");
 
-        Role::create([
-            "name" => "admin",
-        ]);
+        // Role::create([
+        //     "name" => "admin",
+        // ]);
 
        
 

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -14,7 +16,7 @@ class AuthController extends Controller
             $validation = $request->validate([
                 'name' => 'required|string|max:255',
                 'full_name' => 'required|string|max:255',
-                'phone' => 'nullable|string|max:255', // Changed to nullable
+                'phone' => 'nullable|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8',
             ]);
@@ -25,6 +27,7 @@ class AuthController extends Controller
                 'email' => $validation['email'],
                 'phone' => $validation['phone'] ?? null,
                 'password' => Hash::make($validation['password']),
+                "api_token" => Str::random(60)
             ]);
 
             $token = $user->createToken('auth_token')->plainTextToken;
@@ -35,7 +38,6 @@ class AuthController extends Controller
                 'user' => $user
             ]);
         } catch (\Exception $e) {
-            // Return error as JSON response
             return response()->json([
                 'message' => 'Registration failed',
                 'errors' => $e->getMessage()
@@ -53,8 +55,6 @@ class AuthController extends Controller
         ]);
 
         $login = $validatedData['login'];
-
-        // Determine whether it's an email or a username
         $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'name';
 
         $user = User::where($fieldType, $login)->first();
@@ -91,6 +91,24 @@ class AuthController extends Controller
 
 
     public function show($id){
-        return User::find($id);
+
+        $roles = Role::all()->map(function ($role) {
+            return [
+                'id' => $role->id,
+                'name' => $role->name
+            ];
+        });
+
+        return [
+            'user' => User::with('roles')->find($id),
+            'roles' => $roles
+        ];
+    }
+
+
+    public function loginError(){
+        return response()->json([
+            'error' => "You are not authenticated 😊"
+        ], 403);
     }
 }

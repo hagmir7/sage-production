@@ -4,52 +4,65 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function update(Request $request, $id=null)
-{
-    try {
-        // Find the user first
-        if($id){
-            $user = User::findOrFail($id);
-        } else {
-            $user = User::findOrFail(auth()->id());
-            $id = auth()->id(); // Set $id to the authenticated user's ID
-        }
-        
-        // Validate with unique email rule that ignores current user
-        $validation = $request->validate([
+    public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'full_name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $id,
         ]);
 
-        // Create update data array
-        $updateData = [
-            'name' => $validation['name'],
-            'full_name' => $validation['full_name'],
-            'email' => $validation['email'],
-            'phone' => $validation['phone'] ?? null,
-        ];
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => "error",
+                'errors' => $validator->errors()
+            ], 422);
+        }
 
-        // Update the user
-        $user->update($updateData);
 
-        // Refresh user data from database
-        $user = $user->fresh();
+
+        $user = User::find($id);
+        $roles = $user->getRoleNames(); // Get all role names the user has
+        foreach($roles as $role) {
+            $user->removeRole($role);
+        }
+        
+        $user->assignRole($request->roles);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $user->update([
+            'name' => $request->name,
+            'full_name' => $request->full_name,
+            'email' => $request->email,
+            'phone' => $request->phone ?? null,
+        ]);
+        
+        $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
-            'message' => 'User updated successfully',
+            'access_token' => $token,
             'token_type' => 'Bearer',
             'user' => $user
         ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Update failed',
-            'errors' => $e->getMessage()
-        ], 422);
+
+
+        // try {
+
+            
+        // } catch (\Exception $e) {
+        //     return response()->json([
+        //         'message' => 'Update failed',
+        //         'errors' => $e->getMessage()
+        //     ], 422);
+        // }
     }
-}
 }
