@@ -31,6 +31,7 @@ class UserPermissionController extends Controller
     {
 
         $role = Role::findByName($roleName, 'web');
+        $role->syncPermissions([]);
         $validator = Validator::make($request->all(), ['permissions' => 'required|array']);
         if ($validator->fails()) {
             return response()->json([
@@ -39,7 +40,7 @@ class UserPermissionController extends Controller
             ]);
         }
 
-        $role->syncPermissions($request->permissions);;
+        $role->syncPermissions($request->permissions);
         return response()->json(['message' => 'Permissions assigned successfully']);
     }
 
