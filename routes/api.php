@@ -7,6 +7,7 @@ use App\Http\Controllers\MachineEventControlController;
 use App\Http\Controllers\OrderFabricationController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PersonnelController;
+use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\ReglageController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -93,6 +94,13 @@ Route::controller(AtelierController::class)->prefix('atelier')->group(function (
 Route::controller(ReglageController::class)->prefix('reglage')->group(function () {
     Route::post('debut', 'debut');
     Route::post('fin', 'fin');
+    Route::get('fin_machines/{code}', 'fin_machines');
+});
+
+Route::controller(ProductionController::class)->prefix('production')->group(function () {
+    Route::post('debut', 'debut');
+    Route::post('fin', 'fin');
+
 });
 
 

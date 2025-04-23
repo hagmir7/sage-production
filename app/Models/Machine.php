@@ -17,4 +17,9 @@ class Machine extends Model
     {
         return $this->belongsTo(MachineGroupe::class, "CODE_GROUPE");
     }
+
+
+    public function current_events(){
+        return $this->hasMany(MachineEventControle::class, 'CODE_MACHINE', 'CODE_MACHINE');
+    }
 }
