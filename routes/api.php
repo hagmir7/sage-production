@@ -12,6 +12,7 @@ use App\Http\Controllers\ReglageController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserPermissionController;
+use App\Models\RetoucheController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -100,8 +101,13 @@ Route::controller(ReglageController::class)->prefix('reglage')->group(function (
 Route::controller(ProductionController::class)->prefix('production')->group(function () {
     Route::post('debut', 'debut');
     Route::post('fin', 'fin');
-
 });
+
+Route::controller(RetoucheController::class)->prefix('retouche')->group(function () {
+    Route::post('debut', 'debut');
+    Route::post('fin', 'fin');
+});
+
 
 
 
@@ -122,6 +128,7 @@ Route::controller(MachineController::class)
 
 Route::controller(OrderFabricationController::class)->prefix('orders-fabrication')->group(function () {
     Route::get('', 'index');
+    Route::get('/filter', 'filter');
     Route::get('/{id}', 'show');
     Route::get('/nomenclature/{id}', 'nomenclature');
 });

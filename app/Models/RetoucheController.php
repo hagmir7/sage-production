@@ -1,18 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Models;
 
-use App\Models\Machine;
-use App\Models\MachineEventControle;
-use App\Models\Operation;
-use App\Models\MachineEvent;
-use App\Models\OrderFabrication;
-use App\Models\Personnel;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
-class ProductionController extends Controller
+class RetoucheController extends Model
 {
     public function debut(Request $request){
 
@@ -33,7 +28,7 @@ class ProductionController extends Controller
 
         $machineEventExists = MachineEventControle::where("CODE_MACHINE", $request->code_machine)->exists();
     
-        if ((!$machine )|| $machineEventExists) {
+        if ((!$machine ) || $machineEventExists) {
             return response()->json([
                 "errors" => ["machine" => "La machine n'existe pas ou son état ne permet pas d'effectuer l'opération."]
             ]);
@@ -45,7 +40,7 @@ class ProductionController extends Controller
         //  Start with Operation
         $operation = \App\Models\Operation::where("CODE_OF", $request->code_of)
             ->where("CODE_MACHINE", $request->code_machine)
-            ->whereIn("ETAT_OP", ["PROD", "REGL", "ATTENTE"])
+            ->whereIn("ETAT_OP", ["PROD"])
             ->first();
     
         if (!$operation) {
@@ -57,12 +52,10 @@ class ProductionController extends Controller
         $operation->update([
             "DH_DEBUT_REEL" => $now->format('Y-d-m H:i:s.v'),
             "QTE_REALISEE" => 0,
-            "ETAT_OP" => "PROD",
+            "ETAT_OP" => "RET",
             "DH_MODIF" => $now->format('Y-d-m H:i:s.v')
         ]);
 
-
-    
         // Step 4: Create MachineEventControle
     
         $machine_event_controller = MachineEventControle::create([
@@ -78,14 +71,14 @@ class ProductionController extends Controller
             'NO_SEMAINE'           => $now->year . $now->weekOfYear,
             'COEFFICIENT'          => '1',
             'REPARTITION'          => '1.000000',
-            'CODE_ACTIVITE'        => 'PROD',
+            'CODE_ACTIVITE'        => 'RET',
             'CODE_ALEA'            => null,
             'QTE_COMPTE'           => '0.000000',
             'QTE_BONNE'            => '0.000000',
             'QTE_REBUT'            => '0.000000',
             'CODE_REBUT'           => null,
             'QTE_AUTRE'            => '0.000000',
-            'CODE_ACTIVITE_PREC'   => 'PROD',
+            'CODE_ACTIVITE_PREC'   => 'RET',
             'TPS_OUVERTURE'        => '0.000000',
             'CODE_LIBRE'           => null,
             'ANOMALIE'             => 'N',
@@ -97,7 +90,6 @@ class ProductionController extends Controller
         ]);
 
         $of->update([
-            "DH_DEBUT_REEL" => $now->format('Y-m-d H:i:s'),
             "ETAT_OF" => "LANC"
         ]);
 
@@ -114,6 +106,7 @@ class ProductionController extends Controller
 
 
     }
+
 
 
     public function fin(Request $request)
@@ -151,7 +144,7 @@ class ProductionController extends Controller
     
         $operation = Operation::where('CODE_OF', $codeOf)
             ->where("CODE_MACHINE", $request->code_machine)
-            ->whereIn("ETAT_OP", ["PROD", "REGL", "ATTENTE"])
+            ->whereIn("ETAT_OP", ["RET"])
             ->first();
     
         if (!$operation) {
@@ -166,6 +159,7 @@ class ProductionController extends Controller
             "QTE_BONNE" => $new_qte_bonne,
             "QTE_AUTRE" => intval($request->qte_retouche),
             "QTE_REBUT" => intval($request->qte_rebut),
+            "ETAT_OP" => intval($request->status) ? "FINI" : $operation->ETAT_OP
         ]);
     
         $order_fabrication = OrderFabrication::find($request->code_of);
@@ -176,10 +170,6 @@ class ProductionController extends Controller
             ]);
         }
     
-        
-
-
-
         $order_fabrication->update([
             'QTE_BONNE' => $new_qte_bonne,
             'QTE_REBUT' => $request->qte_rebut,
@@ -200,7 +190,7 @@ class ProductionController extends Controller
     
         $eventData['DH_FIN'] = $now->timezone($timezone)->format($dateFormat);
         $eventData['DH_MODIF'] = $now->format('Y-m-d H:i:s');
-        $eventData['CODE_UTILISATEUR'] = optional(auth()->user())->username ?? 'SYSTEM';
+        $eventData['CODE_UTILISATEUR'] =  'SYSTEM';
         $eventData['CODE_MACHINE'] = $request->code_machine;
     
         MachineEvent::create($eventData);
@@ -208,5 +198,5 @@ class ProductionController extends Controller
     
         return response()->json(['message' => 'Event controller successfully finalized'], 200);
     }
-    
+
 }
