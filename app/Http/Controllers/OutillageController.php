@@ -26,7 +26,14 @@ class OutillageController extends Controller
         $now = Carbon::now();
 
 
-        Machine::update([
+        $machine = Machine::find($request->code_machine);
+
+        if($machine->CODE_OUTILLAGE_EC != null){
+            return response()->json(["errors" => ['machine' => "La machine n'existe pas ou son état ne permet pas d'effectuer l'opération."]]);
+        } 
+
+
+        $machine->update([
             'CODE_OUTILLAGE_EC' => $request->code_outillage,
             'DH_MODIF' => $now->format('Y-d-m H:i:s.v'),
         ]);
@@ -42,7 +49,6 @@ class OutillageController extends Controller
             'CODE_OP' => 0,
             'DH_DEBUT' => $now->format('Y-d-m H:i:s.v'),
             'DATE_REF' => $now->format('Y-d-m H:i:s.v'),
-            'DATE_REF' => '2025-04-24',
             'REF_ARTICLE' => null,
             'NO_MOIS' => $now->format('Ym'),
             'NO_SEMAINE' => $now->year . $now->weekOfYear,
@@ -98,11 +104,11 @@ class OutillageController extends Controller
 
         $machine = Machine::find($request->code_machine);
 
-        if($machine->CODE_OUTILLAGE_EC != null){
+        if($machine->CODE_OUTILLAGE_EC == null){
             return response()->json(["errors" => ['machine' => "La machine n'existe pas ou son état ne permet pas d'effectuer l'opération."]]);
         }
-
-        Machine::update([
+; 
+        $machine->update([
             'CODE_OUTILLAGE_EC' => null,
             'DH_MODIF' => $now->format('Y-d-m H:i:s.v'),
         ]);
@@ -116,7 +122,6 @@ class OutillageController extends Controller
             'CODE_OP' => 0,
             'DH_DEBUT' => $now->format('Y-d-m H:i:s.v'),
             'DATE_REF' => $now->format('Y-d-m H:i:s.v'),
-            'DATE_REF' => '2025-04-24',
             'REF_ARTICLE' => null,
             'NO_MOIS' => $now->format('Ym'),
             'NO_SEMAINE' => $now->year . $now->weekOfYear,
@@ -147,12 +152,15 @@ class OutillageController extends Controller
             'CODE_UTILISATEUR' => 'SYSTEM',
         ]);
 
-
-
-      
-
-
-
-
+        if ($machine_event) {
+            return response()->json([
+                "message" => "Machine event controller created successfully."
+            ]);
+        }
     }
+
+
+
+
+
 }

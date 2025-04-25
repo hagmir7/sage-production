@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\MachineController;
 use App\Http\Controllers\MachineEventControlController;
 use App\Http\Controllers\OrderFabricationController;
+use App\Http\Controllers\OutillageController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\ProductionController;
@@ -101,11 +102,19 @@ Route::controller(ReglageController::class)->prefix('reglage')->group(function (
 Route::controller(ProductionController::class)->prefix('production')->group(function () {
     Route::post('debut', 'debut');
     Route::post('fin', 'fin');
+    Route::post('change', 'change');
 });
 
 Route::controller(RetoucheController::class)->prefix('retouche')->group(function () {
     Route::post('debut', 'debut');
     Route::post('fin', 'fin');
+});
+
+
+Route::controller(OutillageController::class)->prefix('outillage')->group(function () {
+    Route::post('debut', 'debut');
+    Route::post('fin', 'fin');
+
 });
 
 

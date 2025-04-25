@@ -13,6 +13,13 @@ class Machine extends Model
     public $incrementing = false;
 
 
+    const CREATED_AT = 'DH_CREATION';
+    const UPDATED_AT = 'DH_MODIF';
+
+
+    protected $guarded = [];
+
+
     public function groupe(): BelongsTo
     {
         return $this->belongsTo(MachineGroupe::class, "CODE_GROUPE");
