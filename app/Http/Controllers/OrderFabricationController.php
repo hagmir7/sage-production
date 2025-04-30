@@ -17,7 +17,7 @@ class OrderFabricationController extends Controller
 
     public function show($id)
     {
-        $order = OrderFabrication::find($id);
+        $order = OrderFabrication::with('operations')->find($id);
         return $order;
     }
 

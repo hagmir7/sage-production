@@ -16,6 +16,7 @@ use App\Http\Controllers\UserPermissionController;
 use App\Models\RetoucheController;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
@@ -159,3 +160,5 @@ Route::controller(MachineEventControlController::class)->prefix('machine-event-c
     Route::get('/{id}', 'show');
     // Route::get('/nomenclature/{id}', 'nomenclature');
 });
+
+
