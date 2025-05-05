@@ -23,5 +23,8 @@ class OrderFabrication extends Model
         return $this->hasMany(Nomenclature::class, 'CODE_OF', 'CODE_OF');
     }
 
-
+    public function operations()
+    {
+        return $this->hasMany(Operation::class, "CODE_OF", "CODE_OF");
+    }
 }
